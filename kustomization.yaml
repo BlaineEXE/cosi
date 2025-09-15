@@ -6,7 +6,6 @@ commonAnnotations:
   objectstorage.k8s.io/authors: "Kubernetes Authors"
   objectstorage.k8s.io/license: "Apache V2"
   objectstorage.k8s.io/support: "https://github.com/kubernetes-sigs/container-object-storage-api"
-  api-approved.kubernetes.io: https://github.com/kubernetes/enhancements/tree/master/keps/sig-storage/1979-object-storage-support
 
 resources:
   # ensure all resources begin with './'

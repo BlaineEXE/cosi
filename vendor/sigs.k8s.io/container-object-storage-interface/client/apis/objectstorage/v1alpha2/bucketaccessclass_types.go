@@ -60,6 +60,8 @@ type BucketAccessClassStatus struct {
 
 // +kubebuilder:object:root=true
 // +kubebuilder:subresource:status
+// +kubebuilder:resource:scope=Cluster
+// +kubebuilder:metadata:annotations="api-approved.kubernetes.io=unapproved, experimental v1alpha2 changes"
 
 // BucketAccessClass is the Schema for the bucketaccessclasses API
 type BucketAccessClass struct {
