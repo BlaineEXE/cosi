@@ -22,6 +22,10 @@ Package v1alpha2 contains API Schema definitions for the objectstorage v1alpha2 
 
 
 
+
+
+
+
 #### Bucket
 
 
@@ -64,6 +68,8 @@ _Appears in:_
 | `metadata` _[ObjectMeta](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#objectmeta-v1-meta)_ | Refer to Kubernetes API documentation for fields of `metadata`. |  |  |
 | `spec` _[BucketAccessSpec](#bucketaccessspec)_ | spec defines the desired state of BucketAccess |  |  |
 | `status` _[BucketAccessStatus](#bucketaccessstatus)_ | status defines the observed state of BucketAccess |  |  |
+
+
 
 
 #### BucketAccessClass
@@ -370,6 +376,23 @@ _Appears in:_
 | `Delete` | BucketDeletionPolicyDelete configures COSI to delete the Bucket object as well as the backend<br />bucket when a Bucket resource is deleted.<br /> |
 
 
+#### BucketInfoVar
+
+_Underlying type:_ _[CosiEnvVar](#cosienvvar)_
+
+A BucketInfoVar defines a protocol-specific COSI environment variable that contains backend
+bucket info.
+All protocol-specific vars include the all-caps protocol name after `COSI_`. E.g., `COSI_AZURE_`.
+
+
+
+_Appears in:_
+- [AzureBucketInfoVar](#azurebucketinfovar)
+- [GcsBucketInfoVar](#gcsbucketinfovar)
+- [S3BucketInfoVar](#s3bucketinfovar)
+
+
+
 #### BucketList
 
 
@@ -421,6 +444,55 @@ BucketStatus defines the observed state of Bucket.
 _Appears in:_
 - [Bucket](#bucket)
 
+| Field | Description | Default | Validation |
+| --- | --- | --- | --- |
+| `readyToUse` _boolean_ | readyToUse indicates that the bucket is ready for consumption by workloads. |  |  |
+| `bucketID` _string_ | bucketID is the unique identifier for the backend bucket known to the driver.<br />Once set, this is immutable. |  |  |
+| `protocols` _[ObjectProtocol](#objectprotocol) array_ | protocols is the set of protocols the Bucket reports to support. BucketAccesses can request<br />access to this BucketClaim using any of the protocols reported here. |  |  |
+| `bucketInfo` _object (keys:string, values:string)_ | BucketInfo reported by the driver, rendered in the COSI_<PROTOCOL>_<KEY> format used for the<br />BucketAccess Secret. e.g., COSI_S3_ENDPOINT, COSI_AZURE_STORAGE_ACCOUNT.<br />This should not contain any sensitive information. |  |  |
+| `error` _[TimestampedError](#timestampederror)_ | Error holds the most recent error message, with a timestamp.<br />This is cleared when provisioning is successful. |  |  |
+
+
+#### CosiEnvVar
+
+_Underlying type:_ _string_
+
+A CosiEnvVar defines a COSI environment variable that contains backend bucket or access info.
+Vars marked "Required" will be present with non-empty values in BucketAccess Secrets.
+Some required vars may only be required in certain contexts, like when a specific
+AuthenticationType is used.
+Some vars are only relevant for specific protocols.
+Non-relevant vars will not be present, even when marked "Required".
+Vars are used as data keys in BucketAccess Secrets.
+Vars must be all-caps and must begin with `COSI_`.
+
+
+
+_Appears in:_
+- [BucketInfoVar](#bucketinfovar)
+- [CredentialVar](#credentialvar)
+
+
+
+#### CredentialVar
+
+_Underlying type:_ _[CosiEnvVar](#cosienvvar)_
+
+A CredentialVar defines a protocol-specific COSI environment variable that contains backend
+bucket access credential info.
+All protocol-specific vars include the all-caps protocol name after `COSI_`. E.g., `COSI_AZURE_`.
+
+
+
+_Appears in:_
+- [AzureCredentialVar](#azurecredentialvar)
+- [GcsCredentialVar](#gcscredentialvar)
+- [S3CredentialVar](#s3credentialvar)
+
+
+
+
+
 
 
 #### ObjectProtocol
@@ -435,6 +507,16 @@ _Appears in:_
 - [BucketClaimSpec](#bucketclaimspec)
 - [BucketClaimStatus](#bucketclaimstatus)
 - [BucketSpec](#bucketspec)
+- [BucketStatus](#bucketstatus)
+
+| Field | Description |
+| --- | --- |
+| `S3` | ObjectProtocolS3 represents the S3 object protocol type.<br /> |
+| `Azure` | ObjectProtocolS3 represents the Azure Blob object protocol type.<br /> |
+| `GCS` | ObjectProtocolS3 represents the Google Cloud Storage object protocol type.<br /> |
+
+
+
 
 
 
@@ -448,6 +530,7 @@ TimestampedError contains an error message with timestamp.
 
 _Appears in:_
 - [BucketClaimStatus](#bucketclaimstatus)
+- [BucketStatus](#bucketstatus)
 
 | Field | Description | Default | Validation |
 | --- | --- | --- | --- |
