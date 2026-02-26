@@ -42,13 +42,11 @@ type Dependencies struct {
 	Logger            logr.Logger     // the test logger, for convenience
 }
 
-// MustBootstrap bootstraps new COSI unit test dependencies, or panics if an error occurs.
-func MustBootstrap(t *testing.T, initialClientObjects ...client.Object) *Dependencies {
-	logger := testr.NewWithOptions(t, testr.Options{
-		Verbosity: 1,
-	})
-	contextWithLogger := logr.NewContext(context.Background(), logger)
-
+// Create a new fake client with given initial objects/lists, or panic if an error occurs.
+func mustNewClient(
+	initialClientObjects []client.Object,
+	initialClientObjectLists []client.ObjectList,
+) client.WithWatch {
 	scheme := runtime.NewScheme()
 	err := cosiapi.AddToScheme(scheme)
 	if err != nil {
@@ -62,6 +60,7 @@ func MustBootstrap(t *testing.T, initialClientObjects ...client.Object) *Depende
 	client := fake.NewClientBuilder().
 		WithScheme(scheme).
 		WithObjects(initialClientObjects...).
+		WithLists(initialClientObjectLists...).
 		WithStatusSubresource(
 			&cosiapi.Bucket{},
 			&cosiapi.BucketClaim{},
@@ -69,11 +68,85 @@ func MustBootstrap(t *testing.T, initialClientObjects ...client.Object) *Depende
 		).
 		Build()
 
+	return client
+}
+
+// MustBootstrap bootstraps new COSI unit test dependencies, or panics if an error occurs.
+func MustBootstrap(t *testing.T, initialClientObjects ...client.Object) *Dependencies {
+	logger := testr.NewWithOptions(t, testr.Options{
+		Verbosity: 1,
+	})
+	contextWithLogger := logr.NewContext(context.Background(), logger)
+
+	client := mustNewClient(initialClientObjects, []client.ObjectList{})
+
 	return &Dependencies{
 		ContextWithLogger: contextWithLogger,
 		Client:            client,
 		Logger:            logger,
 	}
+}
+
+// MustCopy returns a copy of the Dependencies with the same client objects, or panics if an error
+// occurs. Only copies client objects kinds that COSI is expected to manage.
+func (d *Dependencies) MustCopy() *Dependencies {
+	new := &Dependencies{
+		ContextWithLogger: d.ContextWithLogger, // safe to copy
+		Logger:            d.Logger,            // safe to copy
+		// Client is not safe to copy
+	}
+
+	// List all objects in the client that COSI manages, and populate a new client with the lists
+
+	buckets := &cosiapi.BucketList{}
+	err := d.Client.List(d.ContextWithLogger, buckets)
+	if err != nil {
+		panic(err)
+	}
+
+	bClaims := &cosiapi.BucketClaimList{}
+	err = d.Client.List(d.ContextWithLogger, bClaims)
+	if err != nil {
+		panic(err)
+	}
+
+	bClasses := &cosiapi.BucketClassList{}
+	err = d.Client.List(d.ContextWithLogger, bClasses)
+	if err != nil {
+		panic(err)
+	}
+
+	bAccesses := &cosiapi.BucketAccessList{}
+	err = d.Client.List(d.ContextWithLogger, bAccesses)
+	if err != nil {
+		panic(err)
+	}
+
+	bAccessesClasses := &cosiapi.BucketAccessClassList{}
+	err = d.Client.List(d.ContextWithLogger, bAccessesClasses)
+	if err != nil {
+		panic(err)
+	}
+
+	secrets := &corev1.SecretList{}
+	err = d.Client.List(d.ContextWithLogger, secrets)
+	if err != nil {
+		panic(err)
+	}
+
+	new.Client = mustNewClient(
+		[]client.Object{},
+		[]client.ObjectList{
+			buckets,
+			bClaims,
+			bClasses,
+			bAccesses,
+			bAccessesClasses,
+			secrets,
+		},
+	)
+
+	return new
 }
 
 // AssertResourceDoesNotExist asserts that the given resource does not exist in the Dependencies's client.
