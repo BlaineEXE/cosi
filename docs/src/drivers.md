@@ -12,6 +12,7 @@
 | [HPE Alletra Storage MP X10000](https://www.hpe.com/us/en/alletra-storage-mp-x10000.html) | [`cosi.hpe.com`](https://github.com/hpe-storage/cosi-driver)                           | A Kubernetes Container Object Storage Interface (COSI) driver for HPE Alletra Storage MP X10000                            | `v1alpha1`                      |
 | [Scality RING and ARTESCA Object Storage](https://www.scality.com/)                       | [`cosi.scality.com`](https://github.com/scality/cosi-driver)                           | Scality COSI Driver integrates Scality RING, ARTESCA, and other AWS S3 and IAM compatible object storage with Kubernetes   | `v1alpha1`                      |
 | [SeaweedFS](https://seaweedfs.github.io)                                                  | [`seaweedfs.objectstorage.k8s.io`](https://github.com/seaweedfs/seaweedfs-cosi-driver) | COSI driver implementation for SeaweedFS                                                                                   | `v1alpha1`                      |
+| [VersityGW](https://github.com/versity/versitygw)                                        | [`versitygw.cosi.dev`](https://github.com/isac322/versitygw-cosi-driver)               | COSI driver for VersityGW S3-compatible gateway                                                                            | `v1alpha1`                      |
 
 ## Deprecated drivers
 
