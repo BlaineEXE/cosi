@@ -2,6 +2,8 @@ module sigs.k8s.io/container-object-storage-interface
 
 go 1.25.0
 
+toolchain go1.25.8
+
 replace (
 	sigs.k8s.io/container-object-storage-interface/client => ./client
 	sigs.k8s.io/container-object-storage-interface/proto => ./proto

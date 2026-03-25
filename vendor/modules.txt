@@ -982,10 +982,10 @@ sigs.k8s.io/apiserver-network-proxy/konnectivity-client/pkg/client/metrics
 sigs.k8s.io/apiserver-network-proxy/konnectivity-client/pkg/common/metrics
 sigs.k8s.io/apiserver-network-proxy/konnectivity-client/proto/client
 # sigs.k8s.io/container-object-storage-interface/client v0.0.0-20250925174816-5fce7c365e9c => ./client
-## explicit; go 1.24.0
+## explicit; go 1.25.0
 sigs.k8s.io/container-object-storage-interface/client/apis/objectstorage/v1alpha2
 # sigs.k8s.io/container-object-storage-interface/proto v0.0.0-00010101000000-000000000000 => ./proto
-## explicit; go 1.24.0
+## explicit; go 1.25.0
 sigs.k8s.io/container-object-storage-interface/proto
 # sigs.k8s.io/controller-runtime v0.23.3
 ## explicit; go 1.25.0

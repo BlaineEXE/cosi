@@ -1,8 +1,8 @@
 module sigs.k8s.io/container-object-storage-interface/client
 
-go 1.24.0
+go 1.25.0
 
-toolchain go1.24.7
+toolchain go1.25.8
 
 require (
 	k8s.io/apimachinery v0.34.3
